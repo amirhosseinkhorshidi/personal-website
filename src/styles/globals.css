@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Self-hosted on a stable path so index.html can preload it — the version lives
+   in the filename, so bumping the font means renaming the file. */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/vazirmatn-33.003-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Metric-adjusted stand-in so text does not shift when Vazirmatn arrives. */
+@font-face {
+  font-family: "Vazirmatn Fallback";
+  src: local("Arial");
+  ascent-override: 101.52%;
+  descent-override: 53.18%;
+  line-gap-override: 0%;
+  size-adjust: 101%;
+}
+
+/* ── LAYER 1 — PRIMITIVES ──────────────────────────────────────────────────
+   The only place a literal colour is written; everything below is an alias. */
+:root {
+  /* Tailwind v4 `emerald`, verbatim. --primary takes 700 on light, 500 on dark. */
+  --emerald-500: oklch(69.6% 0.17 162.48); /* #10b981 */
+  --emerald-700: oklch(50.8% 0.118 165.612); /* #047857 */
+
+  /* Tailwind v4 `zinc`, verbatim. Only the steps this UI uses are defined. */
+  --n-0: oklch(100% 0 0); /* white */
+  --n-50: oklch(98.5% 0 0); /* zinc-50 */
+  --n-100: oklch(96.7% 0.001 286.375); /* zinc-100 */
+  --n-200: oklch(92% 0.004 286.32); /* zinc-200 */
+  --n-300: oklch(87.1% 0.006 286.286); /* zinc-300 */
+  --n-400: oklch(70.5% 0.015 286.067); /* zinc-400 */
+  --n-500: oklch(55.2% 0.016 285.938); /* zinc-500 */
+  --n-600: oklch(44.2% 0.017 285.786); /* zinc-600 */
+  --n-700: oklch(37% 0.013 285.805); /* zinc-700 */
+  --n-800: oklch(27.4% 0.006 286.033); /* zinc-800 */
+  --n-900: oklch(21% 0.006 285.885); /* zinc-900 */
+  --n-950: oklch(14.1% 0.005 285.823); /* zinc-950 */
+
+  /* Page grounds a step off pure white and near-black, so the page reads soft
+     and cards still lift off it. */
+  --paper-light: oklch(97.5% 0.003 286); /* #f6f6f9 */
+  --paper-dark: oklch(19.5% 0.006 286); /* #151518 */
+  --paper-dark-raised: oklch(23.5% 0.006 286); /* cards on --paper-dark */
+
+  /* Brand colours for the social links, as each brand publishes them. GitHub's
+     ink is near-black, so dark mode swaps it for GitHub's own light grey. */
+  --telegram-blue: #229ed9;
+  --instagram-pink: #e1306c;
+  --github-ink: #181717;
+  --github-snow: #f0f6fc;
+
+  --danger-strong: oklch(50.5% 0.213 27.518); /* red-700 */
+  --danger-bright: oklch(70.4% 0.191 22.216); /* red-400 */
+
+  --radius: 0.75rem;
+}
+
+/* ── LAYER 2 — SEMANTIC TOKENS ─────────────────────────────────────────────
+   Aliases only; a literal colour here is a bug. */
+:root {
+  --background: var(--paper-light);
+  --foreground: var(--n-800);
+  --card: var(--n-0);
+  --card-foreground: var(--n-900);
+  --popover: var(--n-0);
+  --popover-foreground: var(--n-600);
+  --primary: var(--emerald-700);
+  --primary-foreground: var(--n-0);
+  --secondary: var(--n-100);
+  --secondary-foreground: var(--n-900);
+  --muted: var(--n-200);
+  --muted-foreground: var(--n-500);
+  --accent: var(--n-100);
+  --accent-foreground: var(--n-900);
+  --destructive: var(--danger-strong);
+  --destructive-foreground: var(--n-0);
+  --border: var(--n-300);
+  --input: var(--n-300);
+  --skeleton: var(--n-300);
+  --ring: var(--primary);
+  /* The nav is a recessed track with a raised thumb, so it never reads as a card. */
+  --nav: var(--n-200);
+  --nav-thumb: var(--n-0);
+
+  --telegram: var(--telegram-blue);
+  --instagram: var(--instagram-pink);
+  --github: var(--github-ink);
+}
+
+/* Only the slots that differ between themes. */
+.dark {
+  color-scheme: dark;
+  --background: var(--paper-dark);
+  --foreground: var(--n-200);
+  --card: var(--paper-dark-raised);
+  --card-foreground: var(--n-50);
+  --popover: var(--n-800);
+  --popover-foreground: var(--n-400);
+  --primary: var(--emerald-500);
+  --primary-foreground: oklch(0.16 0.02 164);
+  --secondary: var(--n-800);
+  --secondary-foreground: var(--n-0);
+  --muted: var(--n-800);
+  --muted-foreground: var(--n-400);
+  --accent: var(--n-800);
+  --accent-foreground: var(--n-0);
+  --destructive: var(--danger-bright);
+  --border: var(--n-800);
+  --input: var(--n-700);
+  --skeleton: var(--n-700);
+  --nav: var(--n-800);
+  --nav-thumb: var(--n-700);
+
+  --github: var(--github-snow);
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-skeleton: var(--skeleton);
+  --color-ring: var(--ring);
+  --color-nav: var(--nav);
+  --color-nav-thumb: var(--nav-thumb);
+  --color-telegram: var(--telegram);
+  --color-instagram: var(--instagram);
+  --color-github: var(--github);
+
+  --animate-icon-in: icon-in 200ms ease-out;
+  --animate-skeleton-wave: skeleton-wave 1.6s ease-in-out infinite;
+
+  @keyframes skeleton-wave {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  @keyframes icon-in {
+    from {
+      opacity: 0;
+      scale: 0.7;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+}
+
+@theme inline {
+  --font-vazirmatn: "Vazirmatn", "Vazirmatn Fallback", system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+/* Vazirmatn's stylistic set 2, put on spans that show numbers. */
+@utility ss02 {
+  font-feature-settings: "ss02";
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply border-border;
+    font-family: var(--font-vazirmatn);
+  }
+  /* Text is not selectable anywhere on the site, by the owner's choice. */
+  body {
+    @apply bg-background text-foreground antialiased select-none;
+  }
+}
+
+/* The selected tab's pill: `--i` is its index, and each step moves it one tab
+   width, mirrored in RTL where the next tab sits to the left. */
+@layer components {
+  /* A permanent layer: WebKit otherwise promotes the pill only while it slides,
+     under the nav's backdrop-filter, and paints it over the tab labels. */
+  .nav-thumb {
+    will-change: translate;
+    translate: calc(var(--i) * 100%) 0;
+    transition:
+      translate 350ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 200ms ease;
+  }
+  [dir="rtl"] .nav-thumb {
+    translate: calc(var(--i) * -100%) 0;
+  }
+  .nav-thumb[data-pos="-1"] {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-thumb {
+      transition: none;
+    }
+  }
+}
