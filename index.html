@@ -22,21 +22,6 @@
       crossorigin
     />
     <title>امیرحسین خورشیدی | درباره من و پروژه‌هام</title>
-
-    <!-- Resolves the theme before first paint. Writes the same class next-themes
-         would, off the same storageKey as ThemeProvider in src/app.tsx. -->
-    <script>
-      try {
-        const stored = localStorage.getItem('ajayche-theme');
-        const dark =
-          stored === 'dark' ||
-          ((!stored || stored === 'system') &&
-            matchMedia('(prefers-color-scheme: dark)').matches);
-        document.documentElement.classList.add(dark ? 'dark' : 'light');
-      } catch (_) {
-        /* Storage can be blocked outright; the light default still applies. */
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>

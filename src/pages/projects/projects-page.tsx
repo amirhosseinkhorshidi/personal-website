@@ -36,20 +36,16 @@ export function ProjectsPage() {
                   )}
                 >
                   {project.preview.type === 'screenshot' ? (
-                    <>
+                    // The browser picks one source by the system theme and downloads only that one
+                    <picture>
+                      <source media="(prefers-color-scheme: dark)" srcSet={project.preview.dark} />
                       <img
                         src={project.preview.light}
                         alt=""
                         loading="lazy"
-                        className="size-full object-cover object-top dark:hidden"
+                        className="size-full object-cover object-top"
                       />
-                      <img
-                        src={project.preview.dark}
-                        alt=""
-                        loading="lazy"
-                        className="hidden size-full object-cover object-top dark:block"
-                      />
-                    </>
+                    </picture>
                   ) : (
                     <TelegramPostPreview />
                   )}

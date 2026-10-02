@@ -1,11 +1,10 @@
-import { useTheme } from 'next-themes';
 import { cloneElement } from 'react';
 import { type Activity, ActivityCalendar, type BlockElement } from 'react-activity-calendar';
 import { site } from '@/lib/site';
 import { useGitHubContributions } from './use-github-contributions';
 
 // Theme tokens rather than GitHub's greens, so the grid follows the site's
-// colours and flips with the `.dark` class on its own.
+// colours and flips with the system theme on its own.
 const calendarTheme = {
   light: ['var(--muted)', 'var(--primary)'],
   dark: ['var(--muted)', 'var(--primary)'],
@@ -63,7 +62,6 @@ function emptyWindow(): Activity[] {
 
 /** The owner's GitHub contribution graph for the last six months. */
 export function GitHubActivity() {
-  const { resolvedTheme } = useTheme();
   const contributions = useGitHubContributions(site.githubUsername);
   const loading = contributions.status === 'loading';
   const cutoff = sixMonthsAgo();
@@ -92,7 +90,6 @@ export function GitHubActivity() {
           // With the legend off, the grid is the only svg inside
           className="self-center [&_svg]:h-auto [&_svg]:max-w-full"
           data={data}
-          colorScheme={resolvedTheme === 'dark' ? 'dark' : 'light'}
           theme={loading ? skeletonTheme : calendarTheme}
           renderBlock={
             loading ? (block, activity) => skeletonBlock(block, activity, data[0].date) : undefined

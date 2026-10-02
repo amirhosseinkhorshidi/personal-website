@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
 /* Self-hosted on a stable path so index.html can preload it — the version lives
    in the filename, so bumping the font means renaming the file. */
 @font-face {
@@ -65,6 +63,7 @@
 /* ── LAYER 2 — SEMANTIC TOKENS ─────────────────────────────────────────────
    Aliases only; a literal colour here is a bug. */
 :root {
+  color-scheme: light dark;
   --background: var(--paper-light);
   --foreground: var(--n-800);
   --card: var(--n-0);
@@ -94,31 +93,33 @@
   --github: var(--github-ink);
 }
 
-/* Only the slots that differ between themes. */
-.dark {
-  color-scheme: dark;
-  --background: var(--paper-dark);
-  --foreground: var(--n-200);
-  --card: var(--paper-dark-raised);
-  --card-foreground: var(--n-50);
-  --popover: var(--n-800);
-  --popover-foreground: var(--n-400);
-  --primary: var(--emerald-500);
-  --primary-foreground: oklch(0.16 0.02 164);
-  --secondary: var(--n-800);
-  --secondary-foreground: var(--n-0);
-  --muted: var(--n-800);
-  --muted-foreground: var(--n-400);
-  --accent: var(--n-800);
-  --accent-foreground: var(--n-0);
-  --destructive: var(--danger-bright);
-  --border: var(--n-800);
-  --input: var(--n-700);
-  --skeleton: var(--n-700);
-  --nav: var(--n-800);
-  --nav-thumb: var(--n-700);
+/* Only the slots that differ between themes. The site follows the visitor's
+   system setting; there is no toggle. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--paper-dark);
+    --foreground: var(--n-200);
+    --card: var(--paper-dark-raised);
+    --card-foreground: var(--n-50);
+    --popover: var(--n-800);
+    --popover-foreground: var(--n-400);
+    --primary: var(--emerald-500);
+    --primary-foreground: oklch(0.16 0.02 164);
+    --secondary: var(--n-800);
+    --secondary-foreground: var(--n-0);
+    --muted: var(--n-800);
+    --muted-foreground: var(--n-400);
+    --accent: var(--n-800);
+    --accent-foreground: var(--n-0);
+    --destructive: var(--danger-bright);
+    --border: var(--n-800);
+    --input: var(--n-700);
+    --skeleton: var(--n-700);
+    --nav: var(--n-800);
+    --nav-thumb: var(--n-700);
 
-  --github: var(--github-snow);
+    --github: var(--github-snow);
+  }
 }
 
 @theme {
@@ -148,23 +149,11 @@
   --color-instagram: var(--instagram);
   --color-github: var(--github);
 
-  --animate-icon-in: icon-in 200ms ease-out;
   --animate-skeleton-wave: skeleton-wave 1.6s ease-in-out infinite;
 
   @keyframes skeleton-wave {
     50% {
       opacity: 0.35;
-    }
-  }
-
-  @keyframes icon-in {
-    from {
-      opacity: 0;
-      scale: 0.7;
-    }
-    to {
-      opacity: 1;
-      scale: 1;
     }
   }
 }
