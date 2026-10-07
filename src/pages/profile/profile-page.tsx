@@ -1,8 +1,9 @@
-import type { ComponentType } from 'react';
+import { type ComponentType, Fragment } from 'react';
 import { GitHubIcon, InstagramIcon, TelegramIcon } from '@/components/icons/brand-icons';
 import { PageMeta } from '@/components/seo/page-meta';
-import { site } from '@/lib/site';
+import { type BioPart, site } from '@/lib/site';
 import { cn } from '@/lib/utils/cn';
+import packageJson from '../../../package.json';
 import { GitHubActivity } from './github-activity';
 
 interface Social {
@@ -34,6 +35,13 @@ const socials: Social[] = [
   },
 ];
 
+// Read off the manifest, so the version shown is the one a release bumped and built
+const version = packageJson.version.replace(/\d/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)]);
+
+function plainText(parts: readonly BioPart[]) {
+  return parts.map((part) => (typeof part === 'string' ? part : part.text)).join('');
+}
+
 export function ProfilePage() {
   return (
     <div className="flex flex-col gap-6">
@@ -45,9 +53,30 @@ export function ProfilePage() {
         </header>
 
         <div className="flex flex-col gap-4 text-[0.9375rem] text-foreground/80 leading-8">
-          {site.bio.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+          {site.bio.map((paragraph) =>
+            typeof paragraph === 'string' ? (
+              <p key={paragraph}>{paragraph}</p>
+            ) : (
+              <p key={plainText(paragraph)}>
+                {paragraph.map((part, index) =>
+                  typeof part === 'string' ? (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: the parts are fixed text, never reordered, and joiners like « و » repeat
+                    <Fragment key={index}>{part}</Fragment>
+                  ) : (
+                    <a
+                      key={part.href}
+                      href={part.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-sm font-medium text-primary transition-opacity hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                      {part.text}
+                    </a>
+                  ),
+                )}
+              </p>
+            ),
+          )}
         </div>
 
         <ul className="flex flex-wrap gap-2">
@@ -71,6 +100,14 @@ export function ProfilePage() {
       </section>
 
       <GitHubActivity />
+
+      <footer className="flex items-center justify-center gap-2 text-muted-foreground text-xs">
+        <p>تمامی حقوق محفوظ است</p>
+        <span className="h-3 w-px bg-border" aria-hidden="true" />
+        <p>
+          نسخه <span className="ss02">{version}</span>
+        </p>
+      </footer>
     </div>
   );
 }

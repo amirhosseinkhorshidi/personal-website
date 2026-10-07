@@ -101,7 +101,7 @@ export function ProjectsPage() {
                       rel="noreferrer"
                       className={cn(
                         linkClass,
-                        'border-github/20 bg-github/5 text-github hover:bg-github/10',
+                        'border-github/15 bg-github/5 text-github/70 hover:bg-github/10 hover:text-github',
                       )}
                     >
                       <GitHubIcon className="size-4" />

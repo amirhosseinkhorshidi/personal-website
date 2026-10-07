@@ -49,6 +49,26 @@ const projects: readonly Project[] = [
   },
 ];
 
+/** A run of bio text, or a word in it that links out, such as a tool to its own site. */
+export type BioPart = string | { text: string; href: string };
+
+const tools = {
+  typescript: { text: 'TypeScript', href: 'https://www.typescriptlang.org' },
+  react: { text: 'React', href: 'https://react.dev' },
+  next: { text: 'Next.js', href: 'https://nextjs.org' },
+  vite: { text: 'Vite', href: 'https://vite.dev' },
+  shadcn: { text: 'shadcn/ui', href: 'https://ui.shadcn.com' },
+  tailwind: { text: 'Tailwind', href: 'https://tailwindcss.com' },
+} as const;
+
+const networks = {
+  ethereum: { text: 'اتریوم', href: 'https://ethereum.org' },
+  polygon: { text: 'Polygon', href: 'https://polygon.technology' },
+  arbitrum: { text: 'Arbitrum', href: 'https://arbitrum.io' },
+  optimism: { text: 'Optimism', href: 'https://optimism.io' },
+  bsc: { text: 'BSC', href: 'https://www.bnbchain.org' },
+} as const;
+
 /** Site-wide content in one place, so pages never hard-code the owner's details. */
 export const site = {
   /** The live origin, for canonical links, the sitemap and structured data. */
@@ -58,14 +78,41 @@ export const site = {
   latinName: 'Amirhossein Khorshidi',
   title: 'امیرحسین خورشیدی | درباره من و پروژه‌هام',
   description:
-    'امیرحسین خورشیدی، توسعه‌دهنده فرانت‌اند با React و TypeScript. اینجا از خودم و پروژه‌هام می‌نویسم.',
+    'امیرحسین خورشیدی، توسعه‌دهنده TypeScript. با React کار می‌کنم و پروژه‌هام رو با Next.js و Vite می‌سازم. اینجا از خودم و کارهام می‌نویسم.',
   githubUsername: 'amirhosseinkhorshidi',
   role: 'توسعه‌دهنده فرانت‌اند',
+  /** One entry per paragraph; a paragraph with links is written as its parts. */
   bio: [
     'سلام، من امیرحسینم. بیشتر وقتم رو می‌ذارم روی ساختن رابط‌هایی که ساده و روون باشن و کار کردن باهاشون حس خوبی بده. جزئیات کوچیک برام خیلی مهمن، چون به نظرم همین چیزای ریزن که آخرش یه تجربه خوب می‌سازن.',
-    'با React و TypeScript کار می‌کنم و پروژه‌هام رو بیشتر با Next.js و Vite می‌سازم. به دیزاین سیستم و دسترس‌پذیری علاقه دارم و از کار با ابزارایی مثل shadcn/ui و Tailwind خیلی لذت می‌برم، چون باهاشون می‌شه بی‌دردسر رابط‌هایی ساخت که هم خوش‌ظاهرن، هم راحت شخصی‌سازی می‌شن.',
+    [
+      'توسعه‌دهنده ',
+      tools.typescript,
+      ' هستم و با ',
+      tools.react,
+      ' کار می‌کنم. پروژه‌هام رو هم با ',
+      tools.next,
+      ' و ',
+      tools.vite,
+      ' می‌سازم. به دیزاین سیستم و دسترس‌پذیری علاقه دارم و از کار با ابزارایی مثل ',
+      tools.shadcn,
+      ' و ',
+      tools.tailwind,
+      ' خیلی لذت می‌برم، چون باهاشون می‌شه بی‌دردسر رابط‌هایی ساخت که هم ظاهر تمیز و مرتبی دارن، هم راحت شخصی‌سازی می‌شن.',
+    ],
     'کنار اینا به بلاکچین هم علاقه دارم. به نظرم یه قدم بزرگه برای رها شدن از سیستم‌های مالی سنتی و پول فیات، جایی که آدم‌ها بدون واسطه خودشون مالک دارایی‌شون باشن و هیچ سیستمی دست یه نفر یا یه سازمان خاص نباشه.',
-    'بیشتر از همه اکوسیستم اتریوم و راه‌حل‌های مقیاس‌پذیریش برام جذابه، مثل Polygon، Arbitrum و Optimism که هر کدوم یه جور سعی می‌کنن مشکل سرعت و کارمزد اتریوم رو حل کنن. BSC هم برام جالبه و کلا دوست دارم شبکه‌های مختلف رو بیشتر بشناسم و بفهمم پشتشون چی می‌گذره.',
+    [
+      'بیشتر از همه اکوسیستم ',
+      networks.ethereum,
+      ' و راه‌حل‌های مقیاس‌پذیریش برام جذابه، مثل ',
+      networks.polygon,
+      '، ',
+      networks.arbitrum,
+      ' و ',
+      networks.optimism,
+      ' که هر کدوم یه جور سعی می‌کنن مشکل سرعت و کارمزد اتریوم رو حل کنن. ',
+      networks.bsc,
+      ' هم برام جالبه و کلا دوست دارم شبکه‌های مختلف رو بیشتر بشناسم و بفهمم پشتشون چی می‌گذره.',
+    ],
     'اینجا هم قراره پروژه‌هام و چیزایی که توی این مسیر یاد می‌گیرم رو جمع کنم و با بقیه به اشتراک بذارم.',
   ],
   socials: {
