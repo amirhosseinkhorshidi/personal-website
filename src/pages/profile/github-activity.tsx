@@ -1,4 +1,4 @@
-import { cloneElement } from 'react';
+import { cloneElement, useSyncExternalStore } from 'react';
 import { type Activity, ActivityCalendar, type BlockElement } from 'react-activity-calendar';
 import { site } from '@/lib/site';
 import { useGitHubContributions } from './use-github-contributions';
@@ -60,8 +60,25 @@ function emptyWindow(): Activity[] {
   return days;
 }
 
+// The value never changes after hydration, so there is nothing to listen to.
+const subscribeNever = () => () => {
+  // nothing to unsubscribe
+};
+
+// False in the prerendered HTML and while it hydrates, true from then on. The
+// grid is drawn from today's date, so drawing it at build time would leave a
+// grid for the wrong days that no longer matches when the page hydrates.
+function useHydrated() {
+  return useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+}
+
 /** The owner's GitHub contribution graph for the last six months. */
 export function GitHubActivity() {
+  const hydrated = useHydrated();
   const contributions = useGitHubContributions(site.githubUsername);
   const loading = contributions.status === 'loading';
   const cutoff = sixMonthsAgo();
@@ -80,7 +97,11 @@ export function GitHubActivity() {
         فعالیت گیت‌هاب من
       </h2>
 
-      {contributions.status === 'error' ? (
+      {!hydrated ? (
+        // Holds the grid's size, 27 weeks by 7 days of 20px steps plus the month
+        // row, so the page does not shift when it is drawn.
+        <div aria-hidden="true" className="aspect-536/156 w-full max-w-134 self-center" />
+      ) : contributions.status === 'error' ? (
         <p className="text-center text-muted-foreground text-sm">دریافت فعالیت گیت‌هاب ممکن نشد.</p>
       ) : (
         // The grid's SVG has a viewBox, so capping its width scales it down on

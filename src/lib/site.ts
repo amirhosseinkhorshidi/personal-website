@@ -51,7 +51,11 @@ const projects: readonly Project[] = [
 
 /** Site-wide content in one place, so pages never hard-code the owner's details. */
 export const site = {
+  /** The live origin, for canonical links, the sitemap and structured data. */
+  url: 'https://khorshidi.dev',
   name: 'امیرحسین خورشیدی',
+  /** The name in Latin script, so searches written in English find the site too. */
+  latinName: 'Amirhossein Khorshidi',
   title: 'امیرحسین خورشیدی | درباره من و پروژه‌هام',
   description:
     'امیرحسین خورشیدی، توسعه‌دهنده فرانت‌اند با React و TypeScript. اینجا از خودم و پروژه‌هام می‌نویسم.',

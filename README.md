@@ -1,5 +1,9 @@
 A personal website, built as a static React single-page app with Vite. It is in Persian, right to left.
 
+The build prerenders every page to its own HTML file, so search engines and link previews get the full
+content without running any script; the browser then hydrates it. It also writes `sitemap.xml` and a
+`404.html` for unknown paths.
+
 ## Requirements
 
 - Node.js 24 or newer
@@ -10,7 +14,7 @@ A personal website, built as a static React single-page app with Vite. It is in 
 ```bash
 pnpm install      # install dependencies
 pnpm dev          # start the dev server
-pnpm build        # type-check and build to dist/
+pnpm build        # type-check, build and prerender every page to dist/
 pnpm preview      # serve the built dist/ locally
 pnpm format       # format and lint with Biome, applying fixes
 pnpm check        # Biome CI + type-check, as run before a change is done
@@ -42,6 +46,13 @@ ssl_session_tickets off;
 Then save this as `/etc/nginx/conf.d/example.conf`:
 
 ```nginx
+# HTML revalidates on every visit, so a deploy shows at once; other files keep
+# the caching their location gives them.
+map $sent_http_content_type $html_expires {
+    default      off;
+    ~^text/html  epoch;
+}
+
 # Plain HTTP only redirects to HTTPS.
 server {
     listen 80;
@@ -73,14 +84,15 @@ server {
         try_files $uri =404;
     }
 
-    location = /index.html {
-        add_header Cache-Control "no-cache";
+    # Each page is its own prerendered file: / is index.html and /projects is
+    # projects.html. Any other path gets 404.html with a real 404 status, so
+    # search engines never index a missing page as a copy of the home page.
+    location / {
+        expires $html_expires;
+        try_files $uri $uri.html $uri/index.html =404;
     }
 
-    # Client-side routes such as /projects fall back to index.html.
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
+    error_page 404 /404.html;
 }
 ```
 

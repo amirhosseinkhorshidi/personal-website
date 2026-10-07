@@ -1,4 +1,5 @@
 import { GitHubIcon } from '@/components/icons/brand-icons';
+import { PageMeta } from '@/components/seo/page-meta';
 import { site } from '@/lib/site';
 import { cn } from '@/lib/utils/cn';
 import { TelegramPostPreview } from './telegram-post-preview';
@@ -9,7 +10,11 @@ const linkClass =
 export function ProjectsPage() {
   return (
     <section className="flex flex-col gap-6">
-      <title>{`پروژه‌ها | ${site.name}`}</title>
+      <PageMeta
+        title={`پروژه‌ها | ${site.name}`}
+        description="پروژه‌هایی که امیرحسین خورشیدی ساخته: کراکن استور، فروشگاه آنلاین گیفت کارت؛ پلتفرم کات برای رزرو نوبت آرایشگاه؛ و تتر واچ، ربات تلگرامی قیمت لحظه‌ای تتر."
+        path="/projects"
+      />
       <h1 className="sr-only">پروژه‌های من</h1>
       <ul className="flex flex-col gap-6">
         {site.projects.map((project) => {

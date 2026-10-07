@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { GitHubIcon, InstagramIcon, TelegramIcon } from '@/components/icons/brand-icons';
+import { PageMeta } from '@/components/seo/page-meta';
 import { site } from '@/lib/site';
 import { cn } from '@/lib/utils/cn';
 import { GitHubActivity } from './github-activity';
@@ -36,7 +37,7 @@ const socials: Social[] = [
 export function ProfilePage() {
   return (
     <div className="flex flex-col gap-6">
-      <title>{site.title}</title>
+      <PageMeta title={site.title} description={site.description} path="/" />
       <section className="flex flex-col gap-7 rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
         <header className="flex flex-col gap-1">
           <h1 className="font-semibold text-lg">{site.name}</h1>
