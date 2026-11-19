@@ -4,11 +4,17 @@ import { site } from '@/lib/site';
 import { useGitHubContributions } from './use-github-contributions';
 
 // Theme tokens rather than GitHub's greens, so the grid follows the site's
-// colours and flips with the system theme on its own.
-const calendarTheme = {
-  light: ['var(--muted)', 'var(--primary)'],
-  dark: ['var(--muted)', 'var(--primary)'],
-};
+// colours and flips with the system theme on its own. The empty tone, then the
+// brand colour at half, three quarters and full strength. The grid and its
+// legend both read this list, so the two cannot drift apart.
+const levelColors = [
+  'var(--muted)',
+  'color-mix(in oklab, var(--primary) 50%, transparent)',
+  'color-mix(in oklab, var(--primary) 75%, transparent)',
+  'var(--primary)',
+];
+
+const calendarTheme = { light: levelColors, dark: levelColors };
 
 // While loading every block is level 0, drawn in the stronger skeleton tone
 const skeletonTheme = {
@@ -46,6 +52,25 @@ function sixMonthsAgo() {
   return toDay(since);
 }
 
+// The API scales five levels to the whole year, but the grid shows four shades
+// of half a year, and the calendar throws on a level past its maximum. So the
+// levels are drawn again from this window: its busy days are split into thirds,
+// which keeps all three shades in use however the year went.
+function withLevels(activities: Activity[]): Activity[] {
+  const busy = activities
+    .map(({ count }) => count)
+    .filter((count) => count > 0)
+    .sort((a, b) => a - b);
+  const upTo = (share: number) => busy[Math.ceil(busy.length * share) - 1];
+  const low = upTo(1 / 3);
+  const high = upTo(2 / 3);
+
+  return activities.map((activity) => ({
+    ...activity,
+    level: activity.count === 0 ? 0 : activity.count <= low ? 1 : activity.count <= high ? 2 : 3,
+  }));
+}
+
 // Every day of the window at level 0: the skeleton is the real grid, so the
 // card keeps its size when the data lands.
 function emptyWindow(): Activity[] {
@@ -76,6 +101,22 @@ function useHydrated() {
   );
 }
 
+// The shades from least to most, read from the grid's side: in RTL the first
+// swatch sits next to «کمتر».
+function Legend() {
+  return (
+    <div aria-hidden="true" className="flex items-center gap-1.5 text-muted-foreground text-xs">
+      <span>کمتر</span>
+      <span className="flex gap-1">
+        {levelColors.map((color) => (
+          <span key={color} className="size-3 rounded-[3px]" style={{ backgroundColor: color }} />
+        ))}
+      </span>
+      <span>بیشتر</span>
+    </div>
+  );
+}
+
 /** The owner's GitHub contribution graph for the last six months. */
 export function GitHubActivity() {
   const hydrated = useHydrated();
@@ -84,8 +125,13 @@ export function GitHubActivity() {
   const cutoff = sixMonthsAgo();
   const data =
     contributions.status === 'ready'
-      ? contributions.data.filter((activity) => activity.date >= cutoff)
+      ? withLevels(contributions.data.filter((activity) => activity.date >= cutoff))
       : emptyWindow();
+  // Null until the data lands, which is also what the prerendered HTML shows
+  const total =
+    contributions.status === 'ready'
+      ? data.reduce((sum, activity) => sum + activity.count, 0)
+      : null;
 
   return (
     <section
@@ -93,9 +139,17 @@ export function GitHubActivity() {
       aria-busy={loading}
       className="flex flex-col gap-5 rounded-3xl border border-border/60 bg-card p-6 sm:p-8"
     >
-      <h2 id="github-activity" className="font-semibold text-sm">
-        فعالیت گیت‌هاب من
-      </h2>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 id="github-activity" className="font-semibold text-sm">
+            فعالیت گیت‌هاب من
+          </h2>
+          <p className="text-muted-foreground text-xs">تعداد فعالیت در هر روز</p>
+        </div>
+        <span className="inline-flex h-6 shrink-0 items-center rounded-full bg-primary/15 px-2.5 font-semibold text-primary text-xs">
+          ۶ ماه اخیر
+        </span>
+      </div>
 
       {!hydrated ? (
         // Holds the grid's size, 27 weeks by 7 days of 20px steps plus the month
@@ -117,10 +171,31 @@ export function GitHubActivity() {
           }
           blockSize={16}
           blockMargin={4}
+          blockRadius={4}
+          maxLevel={levelColors.length - 1}
           fontSize={12}
+          // The total and the legend are drawn below, in the site's own font and
+          // direction, so the calendar's English footer is off
           showTotalCount={false}
           showColorLegend={false}
         />
+      )}
+
+      {contributions.status !== 'error' && (
+        // Fixed height, so the total arriving does not move the page
+        <div className="flex h-5 items-center justify-between gap-4 text-xs">
+          <Legend />
+          {total === null ? (
+            <span
+              aria-hidden="true"
+              className="h-3.5 w-20 rounded-full bg-skeleton motion-safe:animate-skeleton-wave"
+            />
+          ) : (
+            <p className="font-semibold text-foreground/70">
+              <span className="ss02">{total.toLocaleString('fa-IR')}</span> فعالیت
+            </p>
+          )}
+        </div>
       )}
     </section>
   );
